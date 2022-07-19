@@ -8,10 +8,13 @@ export default class MarvelService {
     return await resp.json();
   };
 
-  getAllCharachters = () =>
-    this.getResourse(
-      `${this._baseURL}characters?limit=9&offset=401&apikey=${this._apiKey}`
+  getAllCharachters = async () => {
+    const res = await this.getResourse(
+      `${this._baseURL}characters?limit=9&offset=311&apikey=${this._apiKey}`
     );
+    return res.data.results.map((oneChar) => this._transformCharacter(oneChar));
+  };
+
   getCharacter = async (id) => {
     const res = await this.getResourse(
       `${this._baseURL}characters/${id}?apikey=${this._apiKey}`
@@ -21,11 +24,13 @@ export default class MarvelService {
 
   _transformCharacter = (char) => {
     return {
+      id: char.id,
       name: char.name,
       description: char.description,
       thumbnail: char.thumbnail.path + "." + char.thumbnail.extension,
       homepage: char.urls[0].url,
       wiki: char.urls[1].url,
+      comics: char.comics.items,
     };
   };
 }

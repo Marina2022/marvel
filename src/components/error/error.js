@@ -1,7 +1,7 @@
 const error = () => {
   return (
     <h2 style={{ textAlign: "center", marginTop: 20 }}>
-      Error случился, че не видишь?
+      Error случился, не видно что ли?
     </h2>
   );
 };

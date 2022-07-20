@@ -9,6 +9,8 @@ class CharList extends Component {
   state = {
     allCharacters: [],
     offset: 311,
+    onMoreLoading: false,
+    heroEnded: false,
   };
 
   componentDidMount = () => {
@@ -16,14 +18,25 @@ class CharList extends Component {
   };
 
   updateAllCharachters = () => {
-    this.onRequest();
+    let currentOffset = localStorage.getItem("currentOffset");
+    console.log(currentOffset);
+    if (currentOffset > 100) currentOffset = 100;
+    this.onRequest(311, currentOffset);
   };
 
-  onRequest = (offset = 311) => {
-    this.marvelService.getAllCharachters(offset).then((res) =>
+  onLoading = () => {
+    this.setState({ onMoreLoading: true });
+  };
+
+  onRequest = (offset = 311, limit = 9) => {
+    this.onLoading();
+    localStorage.setItem("currentOffset", offset - 311 + 9);
+    this.marvelService.getAllCharachters(offset, limit).then((res) =>
       this.setState({
         allCharacters: [...this.state.allCharacters, ...res],
-        offset: offset + 9,
+        offset: this.state.offset + 9,
+        onMoreLoading: false,
+        heroEnded: res.length < 9 ? true : false,
       })
     );
   };
@@ -49,10 +62,14 @@ class CharList extends Component {
       <div className="char__list">
         <ul className="char__grid">{list}</ul>
         <button
+          style={this.state.heroEnded ? { display: "none" } : null}
           className="button button__main button__long"
           onClick={() => this.onRequest(this.state.offset)}
+          disabled={this.state.onMoreLoading}
         >
-          <div className="inner">load more</div>
+          <div className="inner">
+            {this.state.onMoreLoading ? "Loading" : "load more"}
+          </div>
         </button>
       </div>
     );

@@ -8,9 +8,9 @@ export default class MarvelService {
     return await resp.json();
   };
 
-  getAllCharachters = async () => {
+  getAllCharachters = async (offset) => {
     const res = await this.getResourse(
-      `${this._baseURL}characters?limit=9&offset=311&apikey=${this._apiKey}`
+      `${this._baseURL}characters?limit=9&offset=${offset}&apikey=${this._apiKey}`
     );
     return res.data.results.map((oneChar) => this._transformCharacter(oneChar));
   };

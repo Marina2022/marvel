@@ -8,6 +8,7 @@ class CharList extends Component {
   marvelService = new MarvelService();
   state = {
     allCharacters: [],
+    offset: 311,
   };
 
   componentDidMount = () => {
@@ -15,9 +16,16 @@ class CharList extends Component {
   };
 
   updateAllCharachters = () => {
-    this.marvelService
-      .getAllCharachters()
-      .then((res) => this.setState({ allCharacters: res }));
+    this.onRequest();
+  };
+
+  onRequest = (offset = 311) => {
+    this.marvelService.getAllCharachters(offset).then((res) =>
+      this.setState({
+        allCharacters: [...this.state.allCharacters, ...res],
+        offset: offset + 9,
+      })
+    );
   };
 
   render = () => {
@@ -40,7 +48,10 @@ class CharList extends Component {
     return (
       <div className="char__list">
         <ul className="char__grid">{list}</ul>
-        <button className="button button__main button__long">
+        <button
+          className="button button__main button__long"
+          onClick={() => this.onRequest(this.state.offset)}
+        >
           <div className="inner">load more</div>
         </button>
       </div>

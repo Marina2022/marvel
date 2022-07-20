@@ -14,7 +14,6 @@ class App extends Component {
   };
 
   onCharClick = (id) => {
-    console.log("в Апп пришел id ", id);
     this.setState({ selectedCharId: id });
   };
 

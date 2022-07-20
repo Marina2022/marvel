@@ -41,14 +41,14 @@ class RandomChar extends Component {
     const { char, loading, error } = this.state;
     const spinnerComp = loading ? <Spinner /> : null;
     const errorComp = error ? <Error /> : null;
-    const randomCharComp = !(loading || error) ? (
+    const randomCharBlock = !(loading || error) ? (
       <RandomCharBlock char={char} onBtnClick={this.updateChar} />
     ) : null;
     return (
       <div className="randomchar">
         {spinnerComp}
         {errorComp}
-        {randomCharComp}
+        {randomCharBlock}
 
         <div className="randomchar__static">
           <p className="randomchar__title">

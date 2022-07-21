@@ -6,13 +6,19 @@ import MarvelService from "../../services/MarvelService";
 import "./charList.scss";
 
 class CharList extends Component {
-  marvelService = new MarvelService();
-  state = {
-    allCharacters: [],
-    offset: 311,
-    onMoreLoading: false,
-    heroEnded: false,
-  };
+  constructor(props) {
+    super(props);
+    this.marvelService = new MarvelService();
+
+    this.refssss = [];
+    this.aaa = "aaa";
+    this.state = {
+      allCharacters: [],
+      offset: 311,
+      onMoreLoading: false,
+      heroEnded: false,
+    };
+  }
 
   componentDidMount = () => {
     this.renderAllCharachtersAtStart();
@@ -22,7 +28,6 @@ class CharList extends Component {
     let currentLimit = +localStorage.getItem("currentLimit") + 9;
     if (currentLimit > 100) currentLimit = 100;
     if (!currentLimit) currentLimit = 9;
-    console.log({ currentLimit });
     this.onRequest(311, currentLimit);
   };
 
@@ -39,9 +44,19 @@ class CharList extends Component {
         onMoreLoading: false,
         heroEnded: res.length < 9 ? true : false,
       });
-      console.log("this.state.offset = ", this.state.offset);
       localStorage.setItem("currentLimit", this.state.offset - 311);
     });
+  };
+
+  addRef = (elem) => {
+    this.refssss.push(elem);
+  };
+
+  charOnFocus = (e) => {
+    this.refssss.forEach((ref) => {
+      ref.classList.remove("char__item_selected");
+    });
+    e.target.classList.add("char__item_selected");
   };
 
   render = () => {
@@ -52,8 +67,16 @@ class CharList extends Component {
       return (
         <li
           className="char__item"
+          ref={this.addRef}
+          tabIndex={0}
           key={id}
+          onFocus={this.charOnFocus}
           onClick={() => this.props.onCharClick(id)}
+          onKeyUp={(e) => {
+            if (e.code == "Space" || e.code == "Enter") {
+              this.props.onCharClick(id);
+            }
+          }}
         >
           <img src={thumbnail} alt="abyss" style={additionalStyle} />
           <div className="char__name">{name}</div>

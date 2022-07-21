@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/Marina2022/marvel/static/css/main.45312646.css",
+    "main.js": "/Marina2022/marvel/static/js/main.3483f82c.js",
+    "static/media/vision.png": "/Marina2022/marvel/static/media/vision.067d4ae1936d64a577ce.png",
+    "static/media/thor.jpeg": "/Marina2022/marvel/static/media/thor.533e3a5e127689ab0b1f.jpeg",
+    "static/media/mjolnir.png": "/Marina2022/marvel/static/media/mjolnir.61f31e1809f12183a524.png",
+    "index.html": "/Marina2022/marvel/index.html",
+    "main.45312646.css.map": "/Marina2022/marvel/static/css/main.45312646.css.map",
+    "main.3483f82c.js.map": "/Marina2022/marvel/static/js/main.3483f82c.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.45312646.css",
+    "static/js/main.3483f82c.js"
+  ]
+}

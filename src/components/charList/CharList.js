@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import propTypes from "prop-types";
-
+import Spinner from "../spinner/spinner";
+import Error from "../error/error";
 import MarvelService from "../../services/MarvelService";
 
 import "./charList.scss";
@@ -18,6 +19,8 @@ const CharList = (props) => {
   );
   const [onMoreLoading, setOnMoreLoading] = useState(false);
   const [heroEnded, setHeroEnded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     renderAllCharachtersAtStart();
@@ -35,16 +38,25 @@ const CharList = (props) => {
     onRequest(offsetSt);
   };
 
+  const onLoaded = (res) => {
+    setAllCharacters((allCharacters) => [...allCharacters, ...res]);
+    setOffset((offset) => offset + 9);
+
+    setOnMoreLoading(false);
+    setHeroEnded(res.length < 9 ? true : false);
+    localStorage.setItem("currentOffset", offsetSt);
+  };
+
+  const onError = () => {
+    console.log("error");
+  };
+
   const onRequest = (offset, limit = 9) => {
     onLoading();
-    marvelService.getAllCharachters(offset, limit).then((res) => {
-      setAllCharacters((allCharacters) => [...allCharacters, ...res]);
-      setOffset((offset) => offset + 9);
-
-      setOnMoreLoading(false);
-      setHeroEnded(res.length < 9 ? true : false);
-      localStorage.setItem("currentOffset", offsetSt);
-    });
+    marvelService
+      .getAllCharachters(offset, limit)
+      .then(onLoaded)
+      .catch(onError);
   };
 
   const refssss = useRef([]);
@@ -78,7 +90,30 @@ const CharList = (props) => {
       </li>
     );
   });
+  // const listBlock = (
+  //   <ListBlock
+  //     list={list}
+  //     onLoadMoreClick={onLoadMoreClick}
+  //     onMoreLoading={onMoreLoading}
+  //     heroEnded={heroEnded}
+  //   />
+  // );
 
+  const loadingBlock = loading ? <Spinner /> : null;
+  const errorBlock = error ? <Error /> : null;
+  const listBlock = !(loading || error) ? (
+    <ListBlock
+      list={list}
+      onLoadMoreClick={onLoadMoreClick}
+      onMoreLoading={onMoreLoading}
+      heroEnded={heroEnded}
+    />
+  ) : null;
+
+  return <>{listBlock}</>;
+};
+
+const ListBlock = ({ list, onLoadMoreClick, onMoreLoading, heroEnded }) => {
   return (
     <div className="char__list">
       <ul className="char__grid">{list}</ul>

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import propTypes from "prop-types";
-
+import Spinner from "../spinner/spinner";
 import MarvelService from "../../services/MarvelService";
 
 import "./charList.scss";
@@ -35,16 +35,25 @@ const CharList = (props) => {
     onRequest(offsetSt);
   };
 
+  const onLoaded = (res) => {
+    setAllCharacters((allCharacters) => [...allCharacters, ...res]);
+    setOffset((offset) => offset + 9);
+
+    setOnMoreLoading(false);
+    setHeroEnded(res.length < 9 ? true : false);
+    localStorage.setItem("currentOffset", offsetSt);
+  };
+
+  const onError = () => {
+    console.log("error");
+  };
+
   const onRequest = (offset, limit = 9) => {
     onLoading();
-    marvelService.getAllCharachters(offset, limit).then((res) => {
-      setAllCharacters((allCharacters) => [...allCharacters, ...res]);
-      setOffset((offset) => offset + 9);
-
-      setOnMoreLoading(false);
-      setHeroEnded(res.length < 9 ? true : false);
-      localStorage.setItem("currentOffset", offsetSt);
-    });
+    marvelService
+      .getAllCharachters(offset, limit)
+      .then(onLoaded)
+      .catch(onError);
   };
 
   const refssss = useRef([]);

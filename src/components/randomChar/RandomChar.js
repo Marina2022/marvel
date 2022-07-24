@@ -1,82 +1,79 @@
+import { useState, useEffect } from "react";
+
 import "./randomChar.scss";
 import mjolnir from "../../resources/img/mjolnir.png";
 import MarvelService from "../../services/MarvelService";
-import { Component } from "react";
 import Spinner from "../spinner/spinner";
 import Error from "../error/error";
 
-class RandomChar extends Component {
-  state = {
-    char: {},
-    loading: true,
-    error: false,
-  };
-  marvelService = new MarvelService();
+const RandomChar = () => {
+  const [charSt, setCharSt] = useState(null);
+  const [loadingSt, setLoadingSt] = useState(true);
+  const [errorSt, setErrorSt] = useState(false);
 
-  componentDidMount() {
-    this.updateChar();
-  }
+  const marvelService = new MarvelService();
 
-  onCharLoaded = (char) => {
-    this.setState({ char, loading: false });
-  };
+  useEffect(() => {
+    updateChar();
+  }, []);
 
-  onCharLoading = () => {
-    this.setState({ loading: true });
+  const onCharLoaded = (char) => {
+    setCharSt(char);
+    setLoadingSt(false);
   };
 
-  onError = () => {
-    this.setState({ error: true, loading: false });
+  const onCharLoading = () => {
+    setLoadingSt(true);
   };
 
-  updateChar = () => {
-    this.onCharLoading();
+  const onError = () => {
+    setLoadingSt(false);
+    setErrorSt(true);
+  };
+
+  const updateChar = () => {
+    onCharLoading();
     const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-    this.marvelService
-      .getCharacter(id)
-      .then(this.onCharLoaded)
-      .catch(this.onError);
+    marvelService.getCharacter(id).then(onCharLoaded).catch(onError);
   };
-  render = () => {
-    const { char, loading, error } = this.state;
-    const spinnerComp = loading ? <Spinner /> : null;
-    const errorComp = error ? <Error /> : null;
-    const randomCharBlock = !(loading || error) ? (
-      <RandomCharBlock char={char} onBtnClick={this.updateChar} />
-    ) : null;
-    return (
-      <div className="randomchar">
-        {spinnerComp}
-        {errorComp}
-        {randomCharBlock}
 
-        <div className="randomchar__static">
-          <p className="randomchar__title">
-            Random character for today!
-            <br />
-            Do you want to get to know him better?
-          </p>
-          <p className="randomchar__title">Or choose another one</p>
-          <button
-            className="button button__main"
-            onClick={() => {
-              // this.setState({ loading: true });
-              this.updateChar();
-            }}
-          >
-            <div className="inner">try it</div>
-          </button>
-          <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
-        </div>
+  const spinnerComp = loadingSt ? <Spinner /> : null;
+  const errorComp = errorSt ? <Error /> : null;
+  const randomCharBlock = !(loadingSt || errorSt) ? (
+    <RandomCharBlock char={charSt} onBtnClick={updateChar} />
+  ) : null;
+
+  return (
+    <div className="randomchar">
+      {spinnerComp}
+      {errorComp}
+      {randomCharBlock}
+
+      <div className="randomchar__static">
+        <p className="randomchar__title">
+          Random character for today!
+          <br />
+          Do you want to get to know him better?
+        </p>
+        <p className="randomchar__title">Or choose another one</p>
+        <button
+          className="button button__main"
+          onClick={() => {
+            updateChar();
+          }}
+        >
+          <div className="inner">try it</div>
+        </button>
+        <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
       </div>
-    );
-  };
-}
+    </div>
+  );
+};
 
 const RandomCharBlock = ({ char }) => {
   let { name, description, thumbnail, homepage, wiki } = char;
 
-  if (description == "") {
+  if (description === "") {
     description = "Пока не написали описание";
   }
   if (description) {

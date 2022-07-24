@@ -1,106 +1,98 @@
-import { Component } from "react";
+import { useState, useRef, useEffect } from "react";
 import propTypes from "prop-types";
 
 import MarvelService from "../../services/MarvelService";
 
 import "./charList.scss";
 
-class CharList extends Component {
-  constructor(props) {
-    super(props);
-    this.marvelService = new MarvelService();
+const CharList = (props) => {
+  const marvelService = new MarvelService();
 
-    this.refssss = [];
-    this.aaa = "aaa";
-    this.state = {
-      allCharacters: [],
-      offset: 311,
-      onMoreLoading: false,
-      heroEnded: false,
-    };
-  }
+  const initialOffset = 311;
 
-  componentDidMount = () => {
-    this.renderAllCharachtersAtStart();
+  const [allCharacters, setAllCharacters] = useState([]);
+  const [offsetSt, setOffset] = useState(
+    localStorage.getItem("currentOffset")
+      ? +localStorage.getItem("currentOffset")
+      : initialOffset
+  );
+  const [onMoreLoading, setOnMoreLoading] = useState(false);
+  const [heroEnded, setHeroEnded] = useState(false);
+
+  useEffect(() => {
+    renderAllCharachtersAtStart();
+  }, []);
+
+  const renderAllCharachtersAtStart = () => {
+    onRequest(initialOffset, offsetSt - initialOffset + 9);
   };
 
-  renderAllCharachtersAtStart = () => {
-    let currentLimit = +localStorage.getItem("currentLimit") + 9;
-    if (currentLimit > 100) currentLimit = 100;
-    if (!currentLimit) currentLimit = 9;
-    this.onRequest(311, currentLimit);
+  const onLoading = () => {
+    setOnMoreLoading(true);
   };
 
-  onLoading = () => {
-    this.setState({ onMoreLoading: true });
+  const onLoadMoreClick = () => {
+    onRequest(offsetSt);
   };
 
-  onRequest = (offset = 311, limit = 9) => {
-    this.onLoading();
-    this.marvelService.getAllCharachters(offset, limit).then((res) => {
-      this.setState({
-        allCharacters: [...this.state.allCharacters, ...res],
-        offset: this.state.offset + 9 + +localStorage.getItem("currentLimit"),
-        onMoreLoading: false,
-        heroEnded: res.length < 9 ? true : false,
-      });
-      localStorage.setItem("currentLimit", this.state.offset - 311);
+  const onRequest = (offset, limit = 9) => {
+    onLoading();
+    marvelService.getAllCharachters(offset, limit).then((res) => {
+      setAllCharacters((allCharacters) => [...allCharacters, ...res]);
+      setOffset((offset) => offset + 9);
+
+      setOnMoreLoading(false);
+      setHeroEnded(res.length < 9 ? true : false);
+      localStorage.setItem("currentOffset", offsetSt);
     });
   };
 
-  addRef = (elem) => {
-    this.refssss.push(elem);
-  };
-
-  charOnFocus = (e) => {
-    this.refssss.forEach((ref) => {
+  const refssss = useRef([]);
+  const charOnFocus = (e) => {
+    refssss.current.forEach((ref) => {
       ref.classList.remove("char__item_selected");
     });
     e.target.classList.add("char__item_selected");
   };
 
-  render = () => {
-    const list = this.state.allCharacters.map(({ name, thumbnail, id }) => {
-      let additionalStyle = null;
-      if (thumbnail.indexOf("image_not_available") !== -1)
-        additionalStyle = { objectFit: "contain" };
-      return (
-        <li
-          className="char__item"
-          ref={this.addRef}
-          tabIndex={0}
-          key={id}
-          onFocus={this.charOnFocus}
-          onClick={() => this.props.onCharClick(id)}
-          onKeyUp={(e) => {
-            if (e.code == "Space" || e.code == "Enter") {
-              this.props.onCharClick(id);
-            }
-          }}
-        >
-          <img src={thumbnail} alt="abyss" style={additionalStyle} />
-          <div className="char__name">{name}</div>
-        </li>
-      );
-    });
-
+  const list = allCharacters.map(({ name, thumbnail, id }, i) => {
+    let additionalStyle = null;
+    if (thumbnail.indexOf("image_not_available") !== -1)
+      additionalStyle = { objectFit: "contain" };
     return (
-      <div className="char__list">
-        <ul className="char__grid">{list}</ul>
-        <button
-          style={this.state.heroEnded ? { display: "none" } : null}
-          className="button button__main button__long"
-          onClick={() => this.onRequest(this.state.offset, this.currentLimit)}
-          disabled={this.state.onMoreLoading}
-        >
-          <div className="inner">
-            {this.state.onMoreLoading ? "Loading" : "load more"}
-          </div>
-        </button>
-      </div>
+      <li
+        className="char__item"
+        ref={(elem) => (refssss.current[i] = elem)}
+        tabIndex={0}
+        key={id}
+        onFocus={charOnFocus}
+        onClick={() => props.onCharClick(id)}
+        onKeyUp={(e) => {
+          if (e.code === "Space" || e.code === "Enter") {
+            props.onCharClick(id);
+          }
+        }}
+      >
+        <img src={thumbnail} alt="abyss" style={additionalStyle} />
+        <div className="char__name">{name}</div>
+      </li>
     );
-  };
-}
+  });
+
+  return (
+    <div className="char__list">
+      <ul className="char__grid">{list}</ul>
+      <button
+        style={heroEnded ? { display: "none" } : null}
+        className="button button__main button__long"
+        onClick={onLoadMoreClick}
+        disabled={onMoreLoading}
+      >
+        <div className="inner">{onMoreLoading ? "Loading" : "load more"}</div>
+      </button>
+    </div>
+  );
+};
 
 CharList.propTypes = { onCharClick: propTypes.func.isRequired };
 

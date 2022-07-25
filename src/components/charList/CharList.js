@@ -1,11 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import propTypes from "prop-types";
 import Spinner from "../spinner/spinner";
-<<<<<<< HEAD
-=======
 import Error from "../error/error";
->>>>>>> fix
-import MarvelService from "../../services/MarvelService";
+import MarvelService from "../../services/useMarvelService";
 
 import "./charList.scss";
 
@@ -42,7 +39,6 @@ const CharList = (props) => {
     onRequest(offsetSt);
   };
 
-
   const onCharListLoading = () => {
     setLoading(true);
   };
@@ -59,7 +55,6 @@ const CharList = (props) => {
 
   const onError = () => {
     setError(true);
-
   };
 
   const onRequest = (offset, limit = 9) => {

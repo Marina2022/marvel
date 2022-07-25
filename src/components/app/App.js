@@ -21,10 +21,10 @@ const App = () => {
       <main>
         <RandomChar />
         <div className="char__content">
-          <CharList onCharClick={onCharClick} />
+          {/* <CharList onCharClick={onCharClick} />
           <ErrorBoundary>
             <CharInfo charId={selectedCharId} />
-          </ErrorBoundary>
+          </ErrorBoundary> */}
         </div>
         <img className="bg-decoration" src={decoration} alt="vision" />
       </main>

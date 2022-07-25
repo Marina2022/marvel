@@ -21,8 +21,8 @@ const App = () => {
       <main>
         <RandomChar />
         <div className="char__content">
-          {/* <CharList onCharClick={onCharClick} />
-          <ErrorBoundary>
+          <CharList onCharClick={onCharClick} />
+          {/* <ErrorBoundary>
             <CharInfo charId={selectedCharId} />
           </ErrorBoundary> */}
         </div>

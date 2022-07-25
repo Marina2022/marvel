@@ -23,6 +23,7 @@ const CharList = (props) => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    onCharListLoading();
     renderAllCharachtersAtStart();
   }, []);
 
@@ -38,17 +39,22 @@ const CharList = (props) => {
     onRequest(offsetSt);
   };
 
+  const onCharListLoading = () => {
+    setLoading(true);
+  };
+
   const onLoaded = (res) => {
     setAllCharacters((allCharacters) => [...allCharacters, ...res]);
     setOffset((offset) => offset + 9);
-
     setOnMoreLoading(false);
     setHeroEnded(res.length < 9 ? true : false);
     localStorage.setItem("currentOffset", offsetSt);
+    setLoading(false);
+    setError(false);
   };
 
   const onError = () => {
-    console.log("error");
+    setError(true);
   };
 
   const onRequest = (offset, limit = 9) => {
@@ -90,14 +96,6 @@ const CharList = (props) => {
       </li>
     );
   });
-  // const listBlock = (
-  //   <ListBlock
-  //     list={list}
-  //     onLoadMoreClick={onLoadMoreClick}
-  //     onMoreLoading={onMoreLoading}
-  //     heroEnded={heroEnded}
-  //   />
-  // );
 
   const loadingBlock = loading ? <Spinner /> : null;
   const errorBlock = error ? <Error /> : null;
@@ -110,7 +108,13 @@ const CharList = (props) => {
     />
   ) : null;
 
-  return <>{listBlock}</>;
+  return (
+    <>
+      {listBlock}
+      {errorBlock}
+      {loadingBlock}
+    </>
+  );
 };
 
 const ListBlock = ({ list, onLoadMoreClick, onMoreLoading, heroEnded }) => {

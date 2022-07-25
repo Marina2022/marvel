@@ -4,7 +4,6 @@ import Spinner from "../spinner/spinner";
 import Error from "../error/error";
 import useMarvelService from "../../services/useMarvelService";
 
-
 import "./charList.scss";
 
 const CharList = (props) => {
@@ -35,15 +34,7 @@ const CharList = (props) => {
   };
 
   const onLoadMoreClick = () => {
-<<<<<<< HEAD
-    onRequest(offsetSt);
-  };
-
-  const onCharListLoading = () => {
-    setLoading(true);
-=======
     onRequest(offsetSt, 9, false);
->>>>>>> httpHook
   };
 
   const onLoaded = (res) => {
@@ -54,23 +45,10 @@ const CharList = (props) => {
     localStorage.setItem("currentOffset", offsetSt);
   };
 
-<<<<<<< HEAD
-  const onError = () => {
-    setError(true);
-  };
-
-  const onRequest = (offset, limit = 9) => {
-    onLoading();
-    marvelService
-      .getAllCharachters(offset, limit)
-      .then(onLoaded)
-      .catch(onError);
-=======
   const onRequest = (offset, limit = 9, initialLoading) => {
     changeLoadMoreBtn();
     setInitialLoading(initialLoading);
     getAllCharachters(offset, limit).then(onLoaded);
->>>>>>> httpHook
   };
 
   const refssss = useRef([]);

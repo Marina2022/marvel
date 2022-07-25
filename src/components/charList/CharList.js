@@ -2,12 +2,13 @@ import { useState, useRef, useEffect } from "react";
 import propTypes from "prop-types";
 import Spinner from "../spinner/spinner";
 import Error from "../error/error";
-import MarvelService from "../../services/MarvelService";
+import useMarvelService from "../../services/useMarvelService";
+
 
 import "./charList.scss";
 
 const CharList = (props) => {
-  const marvelService = new MarvelService();
+  const { loading, error, getAllCharachters } = useMarvelService();
 
   const initialOffset = 311;
 
@@ -19,28 +20,30 @@ const CharList = (props) => {
   );
   const [onMoreLoading, setOnMoreLoading] = useState(false);
   const [heroEnded, setHeroEnded] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(false);
 
   useEffect(() => {
-    onCharListLoading();
     renderAllCharachtersAtStart();
   }, []);
 
   const renderAllCharachtersAtStart = () => {
-    onRequest(initialOffset, offsetSt - initialOffset + 9);
+    onRequest(initialOffset, offsetSt - initialOffset + 9, true);
   };
 
-  const onLoading = () => {
+  const changeLoadMoreBtn = () => {
     setOnMoreLoading(true);
   };
 
   const onLoadMoreClick = () => {
+<<<<<<< HEAD
     onRequest(offsetSt);
   };
 
   const onCharListLoading = () => {
     setLoading(true);
+=======
+    onRequest(offsetSt, 9, false);
+>>>>>>> httpHook
   };
 
   const onLoaded = (res) => {
@@ -49,10 +52,9 @@ const CharList = (props) => {
     setOnMoreLoading(false);
     setHeroEnded(res.length < 9 ? true : false);
     localStorage.setItem("currentOffset", offsetSt);
-    setLoading(false);
-    setError(false);
   };
 
+<<<<<<< HEAD
   const onError = () => {
     setError(true);
   };
@@ -63,6 +65,12 @@ const CharList = (props) => {
       .getAllCharachters(offset, limit)
       .then(onLoaded)
       .catch(onError);
+=======
+  const onRequest = (offset, limit = 9, initialLoading) => {
+    changeLoadMoreBtn();
+    setInitialLoading(initialLoading);
+    getAllCharachters(offset, limit).then(onLoaded);
+>>>>>>> httpHook
   };
 
   const refssss = useRef([]);
@@ -97,20 +105,18 @@ const CharList = (props) => {
     );
   });
 
-  const loadingBlock = loading ? <Spinner /> : null;
+  const loadingBlock = loading && initialLoading ? <Spinner /> : null;
   const errorBlock = error ? <Error /> : null;
-  const listBlock = !(loading || error) ? (
-    <ListBlock
-      list={list}
-      onLoadMoreClick={onLoadMoreClick}
-      onMoreLoading={onMoreLoading}
-      heroEnded={heroEnded}
-    />
-  ) : null;
 
   return (
     <>
-      {listBlock}
+      <ListBlock
+        list={list}
+        onLoadMoreClick={onLoadMoreClick}
+        onMoreLoading={onMoreLoading}
+        heroEnded={heroEnded}
+      />
+
       {errorBlock}
       {loadingBlock}
     </>

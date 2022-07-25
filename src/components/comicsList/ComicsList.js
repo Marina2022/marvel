@@ -1,73 +1,71 @@
-import './comicsList.scss';
-import uw from '../../resources/img/UW.png';
-import xMen from '../../resources/img/x-men.png';
+import "./comicsList.scss";
+
+import { useEffect, useState } from "react";
+
+import useMarvelService from "../../services/useMarvelService";
+import Error from "../../components/error/error";
+import Spinner from "../../components/spinner/spinner";
 
 const ComicsList = () => {
-    return (
-        <div className="comics__list">
-            <ul className="comics__grid">
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={uw} alt="ultimate war" className="comics__item-img"/>
-                        <div className="comics__item-name">ULTIMATE X-MEN VOL. 5: ULTIMATE WAR TPB</div>
-                        <div className="comics__item-price">9.99$</div>
-                    </a>
-                </li>
-                <li className="comics__item">
-                    <a href="#">
-                        <img src={xMen} alt="x-men" className="comics__item-img"/>
-                        <div className="comics__item-name">X-Men: Days of Future Past</div>
-                        <div className="comics__item-price">NOT AVAILABLE</div>
-                    </a>
-                </li>
-            </ul>
-            <button className="button button__main button__long">
-                <div className="inner">load more</div>
-            </button>
-        </div>
-    )
-}
+  const [comicsSt, setComicsSt] = useState([]);
+  const [initialLoading, setInitialLoading] = useState([true]);
+  const [offset, setOffset] = useState(15);
+  const { loading, error, getComics } = useMarvelService();
+
+  useEffect(() => {
+    onRequest(true);
+  }, []);
+
+  const onRequest = (initialLoad) => {
+    getComics(offset).then((res) => setComicsSt([...comicsSt, ...res]));
+    setInitialLoading(initialLoad);
+    setOffset((offset) => offset + 8);
+  };
+
+  const errorBlock = error ? <Error /> : null;
+  const loadingBlock = loading && initialLoading ? <Spinner /> : null;
+
+  const onLoadMoreClick = () => {
+    onRequest(false);
+  };
+
+  return (
+    <>
+      {errorBlock}
+      {loadingBlock}
+      <ViewComics comicsSt={comicsSt} />
+      <button
+        disabled={loading}
+        className="button button__main button__long"
+        onClick={onLoadMoreClick}
+      >
+        <div className="inner">{loading ? "Loading" : "load more"}</div>
+      </button>
+    </>
+  );
+};
+
+const ViewComics = (props) => {
+  const { comicsSt } = props;
+
+  const list = comicsSt.map((oneComics, index) => (
+    <li className="comics__item" key={index}>
+      <a href={oneComics.url}>
+        <img
+          src={oneComics.thumbnail}
+          alt="ultimate war"
+          className="comics__item-img"
+        />
+        <div className="comics__item-name">{oneComics.title}</div>
+        <div className="comics__item-price">{oneComics.price}$</div>
+      </a>
+    </li>
+  ));
+  return (
+    <div className="comics__list">
+      <ul className="comics__grid">{list}</ul>
+    </div>
+  );
+};
 
 export default ComicsList;

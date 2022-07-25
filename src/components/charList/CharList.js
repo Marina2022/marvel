@@ -1,6 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import propTypes from "prop-types";
 import Spinner from "../spinner/spinner";
+<<<<<<< HEAD
+=======
+import Error from "../error/error";
+>>>>>>> fix
 import MarvelService from "../../services/MarvelService";
 
 import "./charList.scss";
@@ -18,8 +22,11 @@ const CharList = (props) => {
   );
   const [onMoreLoading, setOnMoreLoading] = useState(false);
   const [heroEnded, setHeroEnded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
+    onCharListLoading();
     renderAllCharachtersAtStart();
   }, []);
 
@@ -35,17 +42,24 @@ const CharList = (props) => {
     onRequest(offsetSt);
   };
 
+
+  const onCharListLoading = () => {
+    setLoading(true);
+  };
+
   const onLoaded = (res) => {
     setAllCharacters((allCharacters) => [...allCharacters, ...res]);
     setOffset((offset) => offset + 9);
-
     setOnMoreLoading(false);
     setHeroEnded(res.length < 9 ? true : false);
     localStorage.setItem("currentOffset", offsetSt);
+    setLoading(false);
+    setError(false);
   };
 
   const onError = () => {
-    console.log("error");
+    setError(true);
+
   };
 
   const onRequest = (offset, limit = 9) => {
@@ -88,6 +102,27 @@ const CharList = (props) => {
     );
   });
 
+  const loadingBlock = loading ? <Spinner /> : null;
+  const errorBlock = error ? <Error /> : null;
+  const listBlock = !(loading || error) ? (
+    <ListBlock
+      list={list}
+      onLoadMoreClick={onLoadMoreClick}
+      onMoreLoading={onMoreLoading}
+      heroEnded={heroEnded}
+    />
+  ) : null;
+
+  return (
+    <>
+      {listBlock}
+      {errorBlock}
+      {loadingBlock}
+    </>
+  );
+};
+
+const ListBlock = ({ list, onLoadMoreClick, onMoreLoading, heroEnded }) => {
   return (
     <div className="char__list">
       <ul className="char__grid">{list}</ul>

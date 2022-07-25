@@ -1,7 +1,7 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 
 export const useHttp = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // тут еще метод, headers надо вставить для универсальности, потома
@@ -19,7 +19,7 @@ export const useHttp = () => {
     }
   };
 
-  // и здесь зачем-то (на всякий случай) был использован useCallback. Вот когда узнаю зачем, тогда и напишу
+  // и здесь зачем-то (на всякий случай) был использован useCallback. Когда узнаю зачем, тогда и напишу
   const clearError = () => {
     setError(null);
   };

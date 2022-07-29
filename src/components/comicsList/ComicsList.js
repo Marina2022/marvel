@@ -1,6 +1,7 @@
 import "./comicsList.scss";
 
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import useMarvelService from "../../services/useMarvelService";
 import Error from "../../components/error/error";
@@ -50,7 +51,7 @@ const ViewComics = (props) => {
 
   const list = comicsSt.map((oneComics, index) => (
     <li className="comics__item" key={index}>
-      <a href={oneComics.url}>
+      <Link to={`/comics/${oneComics.id}`}>
         <img
           src={oneComics.thumbnail}
           alt="ultimate war"
@@ -58,7 +59,7 @@ const ViewComics = (props) => {
         />
         <div className="comics__item-name">{oneComics.title}</div>
         <div className="comics__item-price">{oneComics.price}$</div>
-      </a>
+      </Link>
     </li>
   ));
   return (

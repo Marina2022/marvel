@@ -1,6 +1,7 @@
 import "./charInfo.scss";
 
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 import useMarvelService from "../../services/useMarvelService";
 import Spinner from "../spinner/spinner";
@@ -44,11 +45,13 @@ const CharInfoView = ({ char }) => {
   let additionalStyle = null;
   if (thumbnail.indexOf("image_not_available") !== -1)
     additionalStyle = { objectFit: "contain" };
+
   const comicsBlock = comics.map((item, index) => {
+    let comicsId = item.resourceURI.substring(43);
     if (index < 10)
       return (
         <li className="char__comics-item" key={index}>
-          {item.name}
+          <Link to={`/comics/${comicsId}`}>{item.name}</Link>
         </li>
       );
   });

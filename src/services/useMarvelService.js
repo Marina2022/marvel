@@ -10,32 +10,39 @@ const useMarvelService = () => {
     const res = await request(
       `${_baseURL}characters?limit=${limit}&offset=${offset}&apikey=${_apiKey}`
     );
-    return res.data.results.map((oneChar) => _transfromCharacter(oneChar));
+    return res.data.results.map((oneChar) => _transformCharacter(oneChar));
   };
 
   const getCharacter = async (id) => {
     const res = await request(`${_baseURL}characters/${id}?apikey=${_apiKey}`);
-    return _transfromCharacter(res.data.results[0]);
+    return _transformCharacter(res.data.results[0]);
   };
 
   const getComics = async (offset) => {
     const res = await request(
       `${_baseURL}comics?orderBy=issueNumber&limit=8&offset=${offset}&apikey=${_apiKey}`
     );
-    return res.data.results.map((item) => _transfromComics(item));
+    return res.data.results.map((item) => _transformComics(item));
   };
 
-  const _transfromComics = (comics) => {
+  const getOneComics = async (id) => {
+    const res = await request(`${_baseURL}comics/${id}?apikey=${_apiKey}`);
+    return _transformComics(res.data.results[0]);
+  };
+
+  const _transformComics = (comics) => {
     return {
       id: comics.id,
       title: comics.title,
       thumbnail: comics.thumbnail.path + "." + comics.thumbnail.extension,
-      url: comics.resourceURI,
       price: comics.prices[0].price,
+      description: comics.textObjects[0] ? comics.textObjects[0].text : "",
+      pageCount: comics.pageCount,
+      language: comics.textObjects[0] ? comics.textObjects[0].language : "",
     };
   };
 
-  const _transfromCharacter = (char) => {
+  const _transformCharacter = (char) => {
     return {
       id: char.id,
       name: char.name,
@@ -54,6 +61,7 @@ const useMarvelService = () => {
     getCharacter,
     getAllCharachters,
     getComics,
+    getOneComics,
   };
 };
 

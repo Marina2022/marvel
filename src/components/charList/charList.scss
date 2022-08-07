@@ -1,5 +1,22 @@
 @import "../../style/variables.scss";
 
+.chars {
+  opacity: 0;
+}
+
+.chars-enter {
+  opacity: 0;
+}
+
+.chars-enter-active {
+  opacity: 0;
+}
+
+.chars-enter-done {
+  opacity: 1;
+  transition: all 300ms ease-in-out;
+}
+
 .char {
   &__content {
     margin-top: 50px;
@@ -14,6 +31,9 @@
     column-gap: 25px;
     row-gap: 30px;
   }
+  &__list {
+    grid-row: 1 / 4;
+  }
   &__item {
     width: 200px;
     height: 318px;
@@ -21,7 +41,7 @@
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.25);
     padding: 15px;
     cursor: pointer;
-    transition: 0.3s transform;
+    //transition: 0.3s transform;
     img {
       width: 200px;
       height: 200px;

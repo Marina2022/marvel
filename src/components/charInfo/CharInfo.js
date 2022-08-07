@@ -51,7 +51,9 @@ const CharInfoView = ({ char }) => {
     if (index < 10)
       return (
         <li className="char__comics-item" key={index}>
-          <Link to={`/comics/${comicsId}`}>{item.name}</Link>
+          <Link to={`/comics/${comicsId}`} className="li-pointer">
+            {item.name}
+          </Link>
         </li>
       );
   });

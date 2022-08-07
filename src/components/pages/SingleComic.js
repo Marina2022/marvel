@@ -3,7 +3,7 @@ import Error from "../error/error";
 import "./singleComic.scss";
 
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import useMarvelService from "../../services/useMarvelService";
 
 const SingleComic = () => {
@@ -44,7 +44,11 @@ const View = ({ oneComic }) => {
         <p className="single-comic__descr">Language: {language}</p>
         <div className="single-comic__price">{price}$</div>
       </div>
-      <a className="single-comic__back" onClick={() => navigate(-1)} to="/">
+      <a
+        className="single-comic__back li-pointer"
+        onClick={() => navigate(-1)}
+        to="/"
+      >
         Back to previous
       </a>
     </div>

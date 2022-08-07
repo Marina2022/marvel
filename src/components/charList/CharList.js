@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import propTypes from "prop-types";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
+
 import Spinner from "../spinner/spinner";
 import Error from "../error/error";
 import useMarvelService from "../../services/useMarvelService";
@@ -64,22 +66,24 @@ const CharList = (props) => {
     if (thumbnail.indexOf("image_not_available") !== -1)
       additionalStyle = { objectFit: "contain" };
     return (
-      <li
-        className="char__item"
-        ref={(elem) => (refssss.current[i] = elem)}
-        tabIndex={0}
-        key={id}
-        onFocus={charOnFocus}
-        onClick={() => props.onCharClick(id)}
-        onKeyUp={(e) => {
-          if (e.code === "Space" || e.code === "Enter") {
-            props.onCharClick(id);
-          }
-        }}
-      >
-        <img src={thumbnail} alt="abyss" style={additionalStyle} />
-        <div className="char__name">{name}</div>
-      </li>
+      <CSSTransition timeout={300} classNames="chars" key={id}>
+        <li
+          className="char__item"
+          ref={(elem) => (refssss.current[i] = elem)}
+          tabIndex={0}
+          key={id}
+          onFocus={charOnFocus}
+          onClick={() => props.onCharClick(id)}
+          onKeyUp={(e) => {
+            if (e.code === "Space" || e.code === "Enter") {
+              props.onCharClick(id);
+            }
+          }}
+        >
+          <img src={thumbnail} alt="abyss" style={additionalStyle} />
+          <div className="char__name">{name}</div>
+        </li>
+      </CSSTransition>
     );
   });
 
@@ -104,7 +108,11 @@ const CharList = (props) => {
 const ListBlock = ({ list, onLoadMoreClick, onMoreLoading, heroEnded }) => {
   return (
     <div className="char__list">
-      <ul className="char__grid">{list}</ul>
+      <TransitionGroup className="char__grid">
+        {/* <ul className="char__grid"> */}
+        {list}
+        {/* </ul> */}
+      </TransitionGroup>
       <button
         style={heroEnded ? { display: "none" } : null}
         className="button button__main button__long"

@@ -1,4 +1,5 @@
 import "./singleComic.scss";
+import { Helmet } from "react-helmet";
 
 import { useNavigate } from "react-router-dom";
 
@@ -8,6 +9,10 @@ const ComicsLayout = ({ oneComic }) => {
   const navigate = useNavigate();
   return (
     <div className="single-comic">
+      <Helmet>
+        <meta name="description" content={title} />
+        <title>Comics {title}</title>
+      </Helmet>
       <img src={thumbnail} alt={title} className="single-comic__img" />
       <div className="single-comic__info">
         <h2 className="single-comic__name">{title}</h2>

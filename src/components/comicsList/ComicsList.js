@@ -2,6 +2,7 @@ import "./comicsList.scss";
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 import useMarvelService from "../../services/useMarvelService";
 import Error from "../../components/error/error";
@@ -32,6 +33,10 @@ const ComicsList = () => {
 
   return (
     <>
+      <Helmet>
+        <meta name="description" content="Comics" />
+        <title>Marvel comics</title>
+      </Helmet>
       {errorBlock}
       {loadingBlock}
       <ViewComics comicsSt={comicsSt} />

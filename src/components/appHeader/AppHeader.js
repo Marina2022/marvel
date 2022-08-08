@@ -14,7 +14,6 @@ const AppHeader = () => {
         <ul>
           <li>
             <NavLink
-              end
               style={({ isActive }) => ({
                 color: isActive ? "green" : "black",
               })}

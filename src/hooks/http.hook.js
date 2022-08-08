@@ -14,7 +14,7 @@ export const useHttp = () => {
       setLoading(false);
       return await resp.json();
     } catch (err) {
-      setError(err.message);
+      setError(err);
       setLoading(false);
     }
   };

@@ -3,9 +3,8 @@ import { Helmet } from "react-helmet";
 
 import { useNavigate } from "react-router-dom";
 
-const ComicsLayout = ({ oneComic }) => {
-  const { thumbnail, title, price, language, pageCount, description } =
-    oneComic;
+const ComicsLayout = ({ data }) => {
+  const { thumbnail, title, price, language, pageCount, description } = data;
   const navigate = useNavigate();
   return (
     <div className="single-comic">

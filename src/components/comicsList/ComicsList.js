@@ -8,11 +8,24 @@ import useMarvelService from "../../services/useMarvelService";
 import Error from "../../components/error/error";
 import Spinner from "../../components/spinner/spinner";
 
+const setContent = (process, Component, data, initialLoading) => {
+  switch (process) {
+    case "waiting":
+      return <Spinner />;
+    case "loading":
+      return initialLoading ? <Spinner /> : <Component data={data} />;
+    case "error":
+      return <Error />;
+    case "confirmed":
+      return <Component data={data} />;
+  }
+};
+
 const ComicsList = () => {
   const [comicsSt, setComicsSt] = useState([]);
-  const [initialLoading, setInitialLoading] = useState([true]);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [offset, setOffset] = useState(15);
-  const { loading, error, getComics } = useMarvelService();
+  const { getComics, process, setProcess } = useMarvelService();
 
   useEffect(() => {
     onRequest(true);
@@ -22,10 +35,8 @@ const ComicsList = () => {
     getComics(offset).then((res) => setComicsSt([...comicsSt, ...res]));
     setInitialLoading(initialLoad);
     setOffset((offset) => offset + 8);
+    setProcess("confirmed");
   };
-
-  const errorBlock = error ? <Error /> : null;
-  const loadingBlock = loading && initialLoading ? <Spinner /> : null;
 
   const onLoadMoreClick = () => {
     onRequest(false);
@@ -37,23 +48,24 @@ const ComicsList = () => {
         <meta name="description" content="Comics" />
         <title>Marvel comics</title>
       </Helmet>
-      {errorBlock}
-      {loadingBlock}
-      <ViewComics comicsSt={comicsSt} />
+
+      {setContent(process, ViewComics, comicsSt, initialLoading)}
+
       <button
-        disabled={loading}
+        disabled={process == "loading"}
         className="button button__main button__long"
         onClick={onLoadMoreClick}
       >
-        <div className="inner">{loading ? "Loading" : "load more"}</div>
+        <div className="inner">
+          {process == "loading" ? "Loading" : "load more"}
+        </div>
       </button>
     </>
   );
 };
 
-const ViewComics = (props) => {
-  const { comicsSt } = props;
-
+const ViewComics = ({ data }) => {
+  let comicsSt = data;
   const list = comicsSt.map((oneComics, index) => (
     <li className="comics__item" key={index}>
       <Link to={`/comics/${oneComics.id}`}>

@@ -8,19 +8,15 @@ import useMarvelService from "../../services/useMarvelService";
 
 const FormComponent = () => {
   const [char, setChar] = useState(null);
-  const { getCharByName, error, loading, clearError } = useMarvelService();
+  const { getCharByName, setProcess, process } = useMarvelService();
 
   const updateChar = (charName) => {
-    getCharByName(charName).then((res) => {
-      setChar(res);
-    });
+    getCharByName(charName)
+      .then((res) => setChar(res))
+      .then(() => setProcess("confirmed"));
   };
 
   let additionalSection = null; // доп. кнопка или ошибка после запроса
-
-  if (char) {
-    console.log(char);
-  }
 
   if (char === undefined) {
     additionalSection = (
@@ -55,10 +51,12 @@ const FormComponent = () => {
         <Form>
           <h3>Or find a character by name</h3>
           <Field name="charName" type="text" placeholder="Enter name"></Field>
-          <ErrorMessage name="charName"></ErrorMessage>
           <button type="submit" className="button button__main">
-            <div className="inner">Find</div>
+            <div className="inner">
+              {process == "loading" ? "Loading" : "Find"}
+            </div>
           </button>
+          <ErrorMessage name="charName"></ErrorMessage>
           {additionalSection}
         </Form>
       </Formik>

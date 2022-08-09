@@ -25,11 +25,12 @@ const MainPage = () => {
       <RandomChar />
       <div className="char__content">
         <CharList onCharClick={onCharClick} />
-        <ErrorBoundary>
-          <CharInfo charId={selectedCharId} />
-        </ErrorBoundary>
-
-        <FormComponent />
+        <div>
+          <ErrorBoundary>
+            <CharInfo charId={selectedCharId} />
+          </ErrorBoundary>
+          <FormComponent />
+        </div>
       </div>
       <img className="bg-decoration" src={decoration} alt="vision" />
     </>

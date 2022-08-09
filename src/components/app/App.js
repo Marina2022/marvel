@@ -7,7 +7,7 @@ import CharacterLayout from "../CharacterLayout/CharacterLayout";
 
 const MainPage = React.lazy(() => import("../pages/MainPage"));
 const ComicsPage = React.lazy(() => import("../pages/ComicsPage"));
-const ResultComponent = React.lazy(() => import("../pages/ResultComponent"));
+const SinglePage = React.lazy(() => import("../pages/SinglePage"));
 
 const App = () => {
   return (
@@ -21,17 +21,12 @@ const App = () => {
               <Route path="/comics" element={<ComicsPage />} />
               <Route
                 path="/comics/:comicId"
-                element={
-                  <ResultComponent who="comics" Component={ComicsLayout} />
-                }
+                element={<SinglePage who="comics" Component={ComicsLayout} />}
               />
               <Route
                 path="/:comicId"
                 element={
-                  <ResultComponent
-                    who="character"
-                    Component={CharacterLayout}
-                  />
+                  <SinglePage who="character" Component={CharacterLayout} />
                 }
               />
             </Routes>

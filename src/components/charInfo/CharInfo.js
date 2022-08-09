@@ -4,27 +4,11 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import useMarvelService from "../../services/useMarvelService";
-import Spinner from "../spinner/spinner";
-import Error from "../error/error";
-import Skeleton from "../skeleton/Skeleton";
-
-const setContent = (process, Component, data) => {
-  switch (process) {
-    case "waiting":
-      return <Skeleton />;
-    case "loading":
-      return <Spinner />;
-    case "error":
-      return <Error />;
-    case "confirmed":
-      return <Component data={data} />;
-  }
-};
+import { setContent } from "../../utils/setContent";
 
 const CharInfo = (props) => {
   const [char, setChar] = useState(null);
-  const { loading, error, getCharacter, setProcess, process } =
-    useMarvelService();
+  const { getCharacter, setProcess, process } = useMarvelService();
   const onCharLoaded = (charFromResponse) => {
     setChar(charFromResponse);
   };
@@ -40,21 +24,8 @@ const CharInfo = (props) => {
     updateChar(props.charId);
   }, [props.charId]);
 
-  // const skeletonBlock = !(loading || error || char) ? <Skeleton /> : null;
-  // const loadingBlock = loading ? <Spinner /> : null;
-  // const errorBlock = error ? <Error /> : null;
-  // const charInfo = !(loading || error || !char) ? (
-  //   <CharInfoView char={char} />
-  // ) : null;
   return (
-    <div className="char__info">
-      {/* {skeletonBlock}
-      {loadingBlock}
-      {errorBlock}
-      {charInfo} */}
-
-      {setContent(process, CharInfoView, char)}
-    </div>
+    <div className="char__info">{setContent(process, CharInfoView, char)}</div>
   );
 };
 

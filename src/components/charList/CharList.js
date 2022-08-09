@@ -5,11 +5,40 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import Spinner from "../spinner/spinner";
 import Error from "../error/error";
 import useMarvelService from "../../services/useMarvelService";
-
 import "./charList.scss";
 
+const setContent = (process, Component, data, initialLoading) => {
+  switch (process) {
+    case "waiting":
+      return <Spinner />;
+    case "loading":
+      return initialLoading ? <Spinner /> : <Component data={data} />;
+    case "error":
+      return <Error />;
+    case "confirmed":
+      return <Component data={data} />;
+  }
+};
+
+const ListBlock = ({ data }) => {
+  const { list, onLoadMoreClick, onMoreLoading, heroEnded } = data;
+  return (
+    <div className="char__list">
+      <TransitionGroup className="char__grid">{list}</TransitionGroup>
+      <button
+        style={heroEnded ? { display: "none" } : null}
+        className="button button__main button__long"
+        onClick={onLoadMoreClick}
+        disabled={onMoreLoading}
+      >
+        <div className="inner">{onMoreLoading ? "Loading" : "load more"}</div>
+      </button>
+    </div>
+  );
+};
+
 const CharList = (props) => {
-  const { loading, error, getAllCharachters } = useMarvelService();
+  const { getAllCharachters, process, setProcess } = useMarvelService();
 
   const initialOffset = 311;
 
@@ -50,7 +79,9 @@ const CharList = (props) => {
   const onRequest = (offset, limit = 9, initialLoading) => {
     changeLoadMoreBtn();
     setInitialLoading(initialLoading);
-    getAllCharachters(offset, limit).then(onLoaded);
+    getAllCharachters(offset, limit)
+      .then(onLoaded)
+      .then(() => setProcess("confirmed"));
   };
 
   const refssss = useRef([]);
@@ -87,41 +118,16 @@ const CharList = (props) => {
     );
   });
 
-  const loadingBlock = loading && initialLoading ? <Spinner /> : null;
-  const errorBlock = error ? <Error /> : null;
-
-  return (
-    <>
-      <ListBlock
-        list={list}
-        onLoadMoreClick={onLoadMoreClick}
-        onMoreLoading={onMoreLoading}
-        heroEnded={heroEnded}
-      />
-
-      {errorBlock}
-      {loadingBlock}
-    </>
-  );
-};
-
-const ListBlock = ({ list, onLoadMoreClick, onMoreLoading, heroEnded }) => {
-  return (
-    <div className="char__list">
-      <TransitionGroup className="char__grid">
-        {/* <ul className="char__grid"> */}
-        {list}
-        {/* </ul> */}
-      </TransitionGroup>
-      <button
-        style={heroEnded ? { display: "none" } : null}
-        className="button button__main button__long"
-        onClick={onLoadMoreClick}
-        disabled={onMoreLoading}
-      >
-        <div className="inner">{onMoreLoading ? "Loading" : "load more"}</div>
-      </button>
-    </div>
+  return setContent(
+    process,
+    ListBlock,
+    {
+      list,
+      onLoadMoreClick,
+      heroEnded,
+      onMoreLoading,
+    },
+    initialLoading
   );
 };
 
